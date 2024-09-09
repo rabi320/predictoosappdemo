@@ -107,7 +107,7 @@ if uploaded_file is not None:
                     f"You answer only in the name of the column that represents it. "  
                     f"Note: {explanation}")  
     
-    finder_texts[column] = generate_text(df_explainer_txt, finder_sys)  
+        finder_texts[column] = generate_text(df_explainer_txt, finder_sys)  
 
     
     date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
