@@ -1,12 +1,83 @@
 import streamlit as st
 import pandas as pd
 import time 
+from openai import AzureOpenAI
+import os
 
 # Display the logo
 st.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
 
 # Set the title of the app
 st.title('Predictoos AI Hub')
+
+def df_explainer(df):  
+    """  
+    Takes a pandas DataFrame and returns a summary of its contents.  
+      
+    Parameters:  
+    - df: pd.DataFrame, the DataFrame to summarize.  
+  
+    Returns:  
+    - summary: str, a summary of the DataFrame contents.  
+    """  
+    try:  
+        # Check if the input is a DataFrame  
+        if not isinstance(df, pd.DataFrame):  
+            raise ValueError("Input must be a pandas DataFrame.")  
+          
+        # Get basic information about the DataFrame  
+        summary = []  
+        summary.append(f"Number of Rows: {len(df)}")  
+        summary.append(f"Number of Columns: {df.shape[1]}")  
+        summary.append(f"Columns: {', '.join(df.columns)}")  
+          
+        # Add data types of each column  
+        summary.append("Data Types:")  
+        for col, dtype in df.dtypes.items():  
+            summary.append(f"  - {col}: {dtype}")  
+          
+        # Add basic statistics for all columns  
+        summary.append("Summary Statistics for All Columns:")  
+        summary.append(df.describe(include='all').to_string())  
+          
+        # Generate 5 random sorted samples  
+        random_samples = df.sample(n=5, random_state=1).sort_index()  # Using random_state for reproducibility  
+        summary.append("Random Samples:")  
+        for index, row in random_samples.iterrows():  
+            for i,col in enumerate(df.columns):
+                if i!=0:
+                    summary.append(f"  - [{col}] - {row[col]}")  
+                else:
+                    summary.append(f"|sample - [{col}] - {row[col]}")
+          
+        return "\n".join(summary)  
+      
+    except Exception as e:  
+        return f"An error occurred: {e}" 
+
+
+openai_api_key = os.getenv('OPENAI_KEY')
+
+client = AzureOpenAI(  
+    azure_endpoint="https://ai-usa.openai.azure.com/",  
+    api_key=openai_api_key,  
+    api_version="2024-02-15-preview"  
+)  
+MODEL = "Diplochat"  
+  
+def generate_text(prompt, sys_msg, examples=[]):  
+    response = client.chat.completions.create(  
+        model=MODEL,  # model = "deployment_name"  
+        messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
+        temperature=0.7,  
+        max_tokens=2000,  
+        top_p=0.95,  
+        frequency_penalty=0,  
+        presence_penalty=0,  
+        stop=None  
+    )  
+    return response.choices[0].message.content.strip()  
+
 
 # File uploader for CSV files
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -20,11 +91,29 @@ if uploaded_file is not None:
     st.dataframe(df.head())
 
     # Suggest "date","store" and "barcode" and "sales" columns
-    date_candidate = next((col for col in df.columns if "date" in col.lower()), None)
+    df_explainer_txt = df_explainer(df)
+    columns_to_find = ['date', 'store', 'barcode', 'sales quantity']  
+    column_explained = [  
+        'main date of the file',  
+        'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
+        'the product id can be associated to barcode or material id or code',  
+        'the sales quantity can be units, cartons, etc.'  
+    ]  
+    
+    finder_texts = {}  
+    
+    for column, explanation in zip(columns_to_find, column_explained):  
+        finder_sys = (f"You are an AI that has the sole purpose of finding the main {column} column in the pandas dataframe presented to you. "  
+                    f"You answer only in the name of the column that represents it. "  
+                    f"Note: {explanation}")  
+    
+    finder_texts[column] = generate_text(df_explainer_txt, finder_sys)  
+
+    
+    date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
     barcode_candidate = next((col for col in df.columns if "material" in col.lower()), None)
     store_candidate = next((col for col in df.columns if "customer" in col.lower()), None)
     sales_candidate = next((col for col in df.columns if "sales" in col.lower()), None)
-
 
     # Allow the user to select the date column
     date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
