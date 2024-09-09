@@ -113,7 +113,7 @@ if uploaded_file is not None:
     date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
     store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
     barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
-    sales_candidate = next((col for col in df.columns if finder_texts["sales"] in col), None)
+    sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
 
     # Allow the user to select the date column
     date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
