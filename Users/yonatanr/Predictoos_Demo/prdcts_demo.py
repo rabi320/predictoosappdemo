@@ -59,7 +59,7 @@ if uploaded_file is not None:
 
     # Display the selected columns alongside the original
     if 'selected_date_column' in st.session_state and 'selected_sales_column' in st.session_state:
-        selected_df = df[[st.session_state.selected_store_column,st.session_state.selected_barcode_column, st.session_state.selected_sales_column]]
+        selected_df = df[[st.session_state.selected_date_column,st.session_state.selected_store_column,st.session_state.selected_barcode_column, st.session_state.selected_sales_column]]
         st.write("Here is a sample of your demand forecast:")
         st.dataframe(selected_df.head(10))
 
