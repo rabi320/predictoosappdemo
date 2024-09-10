@@ -83,6 +83,7 @@ def generate_text(prompt, sys_msg, examples=[]):
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
 if uploaded_file is not None:
+
     # Read the CSV file into a DataFrame
     df = pd.read_csv(uploaded_file)
 
@@ -116,6 +117,10 @@ if uploaded_file is not None:
     barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
     sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
 
+    # Radio button for choosing forecast type
+    forecast_type = st.radio("Select Forecast Type:", ("Weekly", "Monthly"))
+
+
     # Allow the user to select the date column
     date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
 
@@ -128,12 +133,16 @@ if uploaded_file is not None:
     # Allow the user to select the sales column with a default suggestion
     sales_column = st.selectbox("Select the sales column", options=df.columns.tolist(), index=df.columns.tolist().index(sales_candidate) if sales_candidate else 0)
 
+    # Display the selected horizon for confirmation
+    st.write(f"Selected horizon: {forecast_type}")
+    
     # Display the selected columns for confirmation
     st.write(f"Selected date column: {date_column}")
     # st.write(f"Selected store column: {store_column}")
     st.write(f"Selected barcode column: {barcode_column}")
     st.write(f"Selected sales column: {sales_column}")
 
+    
 
     # Save the confirmed selections
     if st.button("Confirm selections"):
