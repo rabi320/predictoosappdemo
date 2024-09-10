@@ -3,6 +3,8 @@ import pandas as pd
 import time 
 from openai import AzureOpenAI
 import os
+from datetime import date,timedelta,datetime
+
 
 # Display the logo
 st.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
@@ -142,6 +144,7 @@ if uploaded_file is not None:
     st.write(f"Selected barcode column: {barcode_column}")
     st.write(f"Selected sales column: {sales_column}")
 
+
     
 
     # Save the confirmed selections
@@ -155,6 +158,8 @@ if uploaded_file is not None:
         st.session_state.selected_barcode_column = barcode_column
         st.session_state.selected_sales_column = sales_column
 
+        st.session_state.forecast_type = forecast_type
+
         st.session_state.finder_texts = {'date':st.session_state.selected_date_column,
                                         #  'store':st.session_state.selected_store_column,
                                          'barcode':st.session_state.selected_barcode_column, 
@@ -162,11 +167,46 @@ if uploaded_file is not None:
 
         st.success("Selections saved!")
 
+        df = df[list(st.session_state.finder_texts.values())]
+        # begin converting the data to fit the model
+        
+        # date conversion
+        df[st.session_state.selected_date_column] = pd.to_datetime(df[st.session_state.selected_date_column])
+        
+        #max date of the data
+        max_dt = df[st.session_state.selected_date_column].max()
+
+        horizon = 7 if st.session_state.forecast_type=='Weekly' else 30
+
+        history = 180 if st.session_state.forecast_type=='Weekly' else 360
+        
+        # taking leading barcodes
+        grp_df = df.groupby(st.session_state.selected_barcode_column).agg({st.session_state.selected_sales_column:'sum',st.session_state.selected_date_column:lambda x: (max_dt - max(x)).days}).sort_values('Sales_Qty',ascending = False)
+
+        # only sold in the period of the horizon
+        barcode_lst = grp_df[grp_df[st.session_state.selected_date_column]<horizon].head(50).index.tolist()
+
+        history_cutoff = max_dt - timedelta(days = history)
+
+        # filter to the barcodes
+        df = df[(df[st.session_state.selected_barcode_column].isin(barcode_lst))&(df[st.session_state.selected_date_column]>history_cutoff)]
+
+        # fill in 0's of non sale days
+        dt_df=df[[st.session_state.selected_barcode_column]].drop_duplicates(subset = [st.session_state.selected_barcode_column])
+        full_dt_range = pd.date_range(df[st.session_state.selected_date_column].min(),df[st.session_state.selected_date_column].max())
+        dt_df[st.session_state.selected_date_column] = [full_dt_range]*len(dt_df)
+
+
+        # add the 0's automatically
+        df = dt_df.explode(st.session_state.selected_date_column).merge(df,how = 'left',on = dt_df.columns.tolist()).fillna(0)
+
+
     # Display the selected columns alongside the original
     if 'finder_texts' in st.session_state:
-        selected_df = df[list(st.session_state.finder_texts.values())]
+        # selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()]
+        selected_df = df.head(10)
         st.write("Here is a sample of your demand forecast:")
-        st.dataframe(selected_df.head(10))
+        st.dataframe(selected_df)
 
         # Function to convert DataFrame to CSV in memory
         def convert_df_to_csv(df):
