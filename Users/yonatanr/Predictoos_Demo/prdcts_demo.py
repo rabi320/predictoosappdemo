@@ -92,11 +92,12 @@ if uploaded_file is not None:
 
     # Suggest "date","store" and "barcode" and "sales" columns
     df_explainer_txt = df_explainer(df)
-    columns_to_find = ['date', 'store', 'barcode', 'sales quantity']  
+    # columns_to_find = ['date', 'store', 'barcode', 'sales quantity'] 
+    columns_to_find = ['date', 'barcode', 'sales quantity'] 
     column_explained = [  
         'main date of the file',  
-        'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
-        'the product id can be associated to barcode or material id or code',  
+        # 'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
+        'the product id can be associated to barcode or material id or code, if column names are too ambiguous take the column of the item name',  
         'the sales quantity can be units, cartons, etc.'  
     ]  
     
@@ -112,7 +113,7 @@ if uploaded_file is not None:
     
     date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
     store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
-    barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
+    # barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
     sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
 
     # Allow the user to select the date column
@@ -122,7 +123,7 @@ if uploaded_file is not None:
     store_column = st.selectbox("Select the store column", options=df.columns.tolist(), index=df.columns.tolist().index(store_candidate) if store_candidate else 0)
 
     # Allow the user to select the barocde column
-    barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
+    # barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
 
     # Allow the user to select the sales column with a default suggestion
     sales_column = st.selectbox("Select the sales column", options=df.columns.tolist(), index=df.columns.tolist().index(sales_candidate) if sales_candidate else 0)
@@ -130,7 +131,7 @@ if uploaded_file is not None:
     # Display the selected columns for confirmation
     st.write(f"Selected date column: {date_column}")
     st.write(f"Selected store column: {store_column}")
-    st.write(f"Selected barcode column: {barcode_column}")
+    # st.write(f"Selected barcode column: {barcode_column}")
     st.write(f"Selected sales column: {sales_column}")
 
 
@@ -142,10 +143,13 @@ if uploaded_file is not None:
             
         st.session_state.selected_date_column = date_column
         st.session_state.selected_store_column = store_column
-        st.session_state.selected_barcode_column = barcode_column
+        # st.session_state.selected_barcode_column = barcode_column
         st.session_state.selected_sales_column = sales_column
 
-        st.session_state.finder_texts = {'date':st.session_state.selected_date_column,'store':st.session_state.selected_store_column,'barcode':st.session_state.selected_barcode_column, 'sales quantity':st.session_state.selected_sales_column}
+        st.session_state.finder_texts = {'date':st.session_state.selected_date_column,
+                                        #  'store':st.session_state.selected_store_column,
+                                         'barcode':st.session_state.selected_barcode_column, 
+                                         'sales quantity':st.session_state.selected_sales_column}
 
         st.success("Selections saved!")
 
