@@ -82,9 +82,30 @@ def generate_text(prompt, sys_msg, examples=[]):
 
 
 # File uploader for CSV files
+# A visually attractive note using Markdown for instructions
+st.markdown(
+    """
+    <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #e0e0e0;">
+        <h3 style="color: #1f77b4;">📊 Upload Your Sales Data</h3>
+        <p style="font-size: 18px;">Please upload a single CSV file containing:</p>
+        <ul style="font-size: 16px;">
+            <li><strong>Date:</strong> The date of the sale</li>
+            <li><strong>Material Number:</strong> The identifier for the item sold</li>
+            <li><strong>Sale Quantity:</strong> The number of items sold</li>
+        </ul>
+        <p style="color: #ff7f0e;">&nbsp;&nbsp;&nbsp; File format: <strong>CSV</strong></p>
+        <p style="color: #ff7f0e;">&nbsp;&nbsp;&nbsp; Max file size: <strong>10 MB</strong></p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-upload_file_txt = "For the demo process please upload a CSV file"
-uploaded_file = st.file_uploader(upload_file_txt, type=["csv"], label_visibility="hidden")
+# File uploader with a hidden label
+uploaded_file = st.file_uploader("", type="csv", label_visibility="hidden")
+
+
+# upload_file_txt = "For the demo process please upload a CSV file"
+# uploaded_file = st.file_uploader(upload_file_txt, type=["csv"], label_visibility="hidden")
 
 if uploaded_file is not None:
 
