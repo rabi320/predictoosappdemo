@@ -101,7 +101,7 @@ st.markdown(
 )
 
 # File uploader with a hidden label
-uploaded_file = st.file_uploader("", type="csv", label_visibility="hidden")
+uploaded_file = st.file_uploader("", type="csv", label_visibility="collapsed")
 
 
 # upload_file_txt = "For the demo process please upload a CSV file"
