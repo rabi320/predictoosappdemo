@@ -109,137 +109,143 @@ uploaded_file = st.file_uploader("", type="csv", label_visibility="collapsed")
 
 if uploaded_file is not None:
 
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(uploaded_file)
+    # Check the file size
+    if uploaded_file.size > 10 * 1024 * 1024:  # 10 MB in bytes
+        st.error("File size exceeds 10 MB. Please upload a smaller file.")
+    else:
+        st.success("File uploaded successfully!")
 
-    # Display the first 5 rows of the DataFrame
-    st.write("Here are the first 5 rows of the uploaded CSV:")
-    st.dataframe(df.head())
+        # Read the CSV file into a DataFrame
+        df = pd.read_csv(uploaded_file)
 
-    # Suggest "date","store" and "barcode" and "sales" columns
-    df_explainer_txt = df_explainer(df)
-    # columns_to_find = ['date', 'store', 'barcode', 'sales quantity'] 
-    columns_to_find = ['date', 'barcode', 'sales quantity'] 
-    column_explained = [  
-        'main date of the file',  
-        # 'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
-        'First, try to find the most likely item or product name. If that isn’t available, then attempt to find the most likely product ID, which can be associated with the barcode, material ID, or code.',  
-        'the sales quantity can be units, cartons, etc.'  
-    ]  
-    
-    finder_texts = {}  
-    
-    for column, explanation in zip(columns_to_find, column_explained):  
-        finder_sys = (f"You are an AI that has the sole purpose of finding the main {column} column in the pandas dataframe presented to you. "  
-                    f"You answer only in the name of the column that represents it. "  
-                    f"Note: {explanation}")  
-    
-        finder_texts[column] = generate_text(df_explainer_txt, finder_sys)  
+        # Display the first 5 rows of the DataFrame
+        st.write("Here are the first 5 rows of the uploaded CSV:")
+        st.dataframe(df.head())
 
-    
-    date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
-    # store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
-    barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
-    sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
+        # Suggest "date","store" and "barcode" and "sales" columns
+        df_explainer_txt = df_explainer(df)
+        # columns_to_find = ['date', 'store', 'barcode', 'sales quantity'] 
+        columns_to_find = ['date', 'barcode', 'sales quantity'] 
+        column_explained = [  
+            'main date of the file',  
+            # 'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
+            'First, try to find the most likely item or product name. If that isn’t available, then attempt to find the most likely product ID, which can be associated with the barcode, material ID, or code.',  
+            'the sales quantity can be units, cartons, etc.'  
+        ]  
+        
+        finder_texts = {}  
+        
+        for column, explanation in zip(columns_to_find, column_explained):  
+            finder_sys = (f"You are an AI that has the sole purpose of finding the main {column} column in the pandas dataframe presented to you. "  
+                        f"You answer only in the name of the column that represents it. "  
+                        f"Note: {explanation}")  
+        
+            finder_texts[column] = generate_text(df_explainer_txt, finder_sys)  
 
-    # Radio button for choosing forecast type
-    forecast_type = st.radio("Select Forecast Type:", ("Weekly", "Monthly"))
+        
+        date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
+        # store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
+        barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
+        sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
 
-
-    # Allow the user to select the date column
-    date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
-
-    # Allow the user to select the store column
-    # store_column = st.selectbox("Select the store column", options=df.columns.tolist(), index=df.columns.tolist().index(store_candidate) if store_candidate else 0)
-
-    # Allow the user to select the barocde column
-    barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
-
-    # Allow the user to select the sales column with a default suggestion
-    sales_column = st.selectbox("Select the sales column", options=df.columns.tolist(), index=df.columns.tolist().index(sales_candidate) if sales_candidate else 0)
-
-    # Display the selected horizon for confirmation
-    st.write(f"Selected horizon: {forecast_type}")
-    
-    # Display the selected columns for confirmation
-    st.write(f"Selected date column: {date_column}")
-    # st.write(f"Selected store column: {store_column}")
-    st.write(f"Selected barcode column: {barcode_column}")
-    st.write(f"Selected sales column: {sales_column}")
+        # Radio button for choosing forecast type
+        forecast_type = st.radio("Select Forecast Type:", ("Weekly", "Monthly"))
 
 
-    
+        # Allow the user to select the date column
+        date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
 
-    # Save the confirmed selections
-    if st.button("Confirm selections"):
-        # Add a loading spinner with a delay
-        with st.spinner('Calculating predictions...'):
-            time.sleep(5)  # Wait for 5 seconds
+        # Allow the user to select the store column
+        # store_column = st.selectbox("Select the store column", options=df.columns.tolist(), index=df.columns.tolist().index(store_candidate) if store_candidate else 0)
+
+        # Allow the user to select the barocde column
+        barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
+
+        # Allow the user to select the sales column with a default suggestion
+        sales_column = st.selectbox("Select the sales column", options=df.columns.tolist(), index=df.columns.tolist().index(sales_candidate) if sales_candidate else 0)
+
+        # Display the selected horizon for confirmation
+        st.write(f"Selected horizon: {forecast_type}")
+        
+        # Display the selected columns for confirmation
+        st.write(f"Selected date column: {date_column}")
+        # st.write(f"Selected store column: {store_column}")
+        st.write(f"Selected barcode column: {barcode_column}")
+        st.write(f"Selected sales column: {sales_column}")
+
+
+        
+
+        # Save the confirmed selections
+        if st.button("Confirm selections"):
+            # Add a loading spinner with a delay
+            with st.spinner('Calculating predictions...'):
+                time.sleep(5)  # Wait for 5 seconds
+                
+            st.session_state.selected_date_column = date_column
+            # st.session_state.selected_store_column = store_column
+            st.session_state.selected_barcode_column = barcode_column
+            st.session_state.selected_sales_column = sales_column
+
+            st.session_state.forecast_type = forecast_type
+
+            st.session_state.finder_texts = {'date':st.session_state.selected_date_column,
+                                            #  'store':st.session_state.selected_store_column,
+                                            'barcode':st.session_state.selected_barcode_column, 
+                                            'sales quantity':st.session_state.selected_sales_column}
+
+            st.success("Selections saved!")
+
+            df = df[list(st.session_state.finder_texts.values())]
+            # begin converting the data to fit the model
             
-        st.session_state.selected_date_column = date_column
-        # st.session_state.selected_store_column = store_column
-        st.session_state.selected_barcode_column = barcode_column
-        st.session_state.selected_sales_column = sales_column
+            # date conversion
+            df[st.session_state.selected_date_column] = pd.to_datetime(df[st.session_state.selected_date_column])
+            
+            #max date of the data
+            max_dt = df[st.session_state.selected_date_column].max()
 
-        st.session_state.forecast_type = forecast_type
+            horizon = 7 if st.session_state.forecast_type=='Weekly' else 30
 
-        st.session_state.finder_texts = {'date':st.session_state.selected_date_column,
-                                        #  'store':st.session_state.selected_store_column,
-                                         'barcode':st.session_state.selected_barcode_column, 
-                                         'sales quantity':st.session_state.selected_sales_column}
+            history = 180 if st.session_state.forecast_type=='Weekly' else 360
+            
+            # taking leading barcodes
+            grp_df = df.groupby(st.session_state.selected_barcode_column).agg({st.session_state.selected_sales_column:'sum',st.session_state.selected_date_column:lambda x: (max_dt - max(x)).days}).sort_values('Sales_Qty',ascending = False)
 
-        st.success("Selections saved!")
+            # only sold in the period of the horizon
+            barcode_lst = grp_df[grp_df[st.session_state.selected_date_column]<horizon].head(50).index.tolist()
 
-        df = df[list(st.session_state.finder_texts.values())]
-        # begin converting the data to fit the model
-        
-        # date conversion
-        df[st.session_state.selected_date_column] = pd.to_datetime(df[st.session_state.selected_date_column])
-        
-        #max date of the data
-        max_dt = df[st.session_state.selected_date_column].max()
+            history_cutoff = max_dt - timedelta(days = history)
 
-        horizon = 7 if st.session_state.forecast_type=='Weekly' else 30
+            # filter to the barcodes
+            df = df[(df[st.session_state.selected_barcode_column].isin(barcode_lst))&(df[st.session_state.selected_date_column]>history_cutoff)]
 
-        history = 180 if st.session_state.forecast_type=='Weekly' else 360
-        
-        # taking leading barcodes
-        grp_df = df.groupby(st.session_state.selected_barcode_column).agg({st.session_state.selected_sales_column:'sum',st.session_state.selected_date_column:lambda x: (max_dt - max(x)).days}).sort_values('Sales_Qty',ascending = False)
-
-        # only sold in the period of the horizon
-        barcode_lst = grp_df[grp_df[st.session_state.selected_date_column]<horizon].head(50).index.tolist()
-
-        history_cutoff = max_dt - timedelta(days = history)
-
-        # filter to the barcodes
-        df = df[(df[st.session_state.selected_barcode_column].isin(barcode_lst))&(df[st.session_state.selected_date_column]>history_cutoff)]
-
-        # fill in 0's of non sale days
-        dt_df=df[[st.session_state.selected_barcode_column]].drop_duplicates(subset = [st.session_state.selected_barcode_column])
-        full_dt_range = pd.date_range(df[st.session_state.selected_date_column].min(),df[st.session_state.selected_date_column].max())
-        dt_df[st.session_state.selected_date_column] = [full_dt_range]*len(dt_df)
+            # fill in 0's of non sale days
+            dt_df=df[[st.session_state.selected_barcode_column]].drop_duplicates(subset = [st.session_state.selected_barcode_column])
+            full_dt_range = pd.date_range(df[st.session_state.selected_date_column].min(),df[st.session_state.selected_date_column].max())
+            dt_df[st.session_state.selected_date_column] = [full_dt_range]*len(dt_df)
 
 
-        # add the 0's automatically
-        df = dt_df.explode(st.session_state.selected_date_column).merge(df,how = 'left',on = dt_df.columns.tolist()).fillna(0)
+            # add the 0's automatically
+            df = dt_df.explode(st.session_state.selected_date_column).merge(df,how = 'left',on = dt_df.columns.tolist()).fillna(0)
 
 
-    # Display the selected columns alongside the original
-    if 'finder_texts' in st.session_state:
-        selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()][list(st.session_state.finder_texts.values())]
-        # selected_df = df.head(10)
-        st.write("Here is a sample of your demand forecast:")
-        st.dataframe(selected_df.head(10))
+        # Display the selected columns alongside the original
+        if 'finder_texts' in st.session_state:
+            selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()][list(st.session_state.finder_texts.values())]
+            # selected_df = df.head(10)
+            st.write("Here is a sample of your demand forecast:")
+            st.dataframe(selected_df.head(10))
 
-        # Function to convert DataFrame to CSV in memory
-        def convert_df_to_csv(df):
-            return df.to_csv(index=False).encode('utf-8')
+            # Function to convert DataFrame to CSV in memory
+            def convert_df_to_csv(df):
+                return df.to_csv(index=False).encode('utf-8')
 
-        # Create a download button for the selected DataFrame
-        csv = convert_df_to_csv(selected_df)
-        st.download_button(
-            label="Download full forecast",
-            data=csv,
-            file_name='forecast.csv',
-            mime='text/csv'
-        )
+            # Create a download button for the selected DataFrame
+            csv = convert_df_to_csv(selected_df)
+            st.download_button(
+                label="Download full forecast",
+                data=csv,
+                file_name='forecast.csv',
+                mime='text/csv'
+            )
