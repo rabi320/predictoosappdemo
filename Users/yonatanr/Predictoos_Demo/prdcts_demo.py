@@ -82,7 +82,9 @@ def generate_text(prompt, sys_msg, examples=[]):
 
 
 # File uploader for CSV files
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+upload_file_txt = "For the demo process please upload a CSV file"
+uploaded_file = st.file_uploader(upload_file_txt, type=["csv"], label_visibility="hidden")
 
 if uploaded_file is not None:
 
