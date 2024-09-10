@@ -97,7 +97,7 @@ if uploaded_file is not None:
     column_explained = [  
         'main date of the file',  
         # 'the store id can be represented as customer id or code, and other terminology directed to a sub-chain level',  
-        'the product id can be associated to barcode or material id or code, if column names are too ambiguous take the column of the item name',  
+        'First, try to find the most likely item or product name. If that isn’t available, then attempt to find the most likely product ID, which can be associated with the barcode, material ID, or code.',  
         'the sales quantity can be units, cartons, etc.'  
     ]  
     
