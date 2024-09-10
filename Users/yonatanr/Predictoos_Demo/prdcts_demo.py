@@ -203,7 +203,7 @@ if uploaded_file is not None:
 
     # Display the selected columns alongside the original
     if 'finder_texts' in st.session_state:
-        selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()]
+        selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()][list(st.session_state.finder_texts.values())]
         # selected_df = df.head(10)
         st.write("Here is a sample of your demand forecast:")
         st.dataframe(selected_df.head(10))
