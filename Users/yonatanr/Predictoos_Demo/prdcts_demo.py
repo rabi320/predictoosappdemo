@@ -112,26 +112,26 @@ if uploaded_file is not None:
 
     
     date_candidate = next((col for col in df.columns if finder_texts["date"] in col), None)
-    store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
-    # barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
+    # store_candidate = next((col for col in df.columns if finder_texts["store"] in col), None)
+    barcode_candidate = next((col for col in df.columns if finder_texts["barcode"] in col), None)
     sales_candidate = next((col for col in df.columns if finder_texts["sales quantity"] in col), None)
 
     # Allow the user to select the date column
     date_column = st.selectbox("Select the date column", options=df.columns.tolist(), index=df.columns.tolist().index(date_candidate) if date_candidate else 0)
 
     # Allow the user to select the store column
-    store_column = st.selectbox("Select the store column", options=df.columns.tolist(), index=df.columns.tolist().index(store_candidate) if store_candidate else 0)
+    # store_column = st.selectbox("Select the store column", options=df.columns.tolist(), index=df.columns.tolist().index(store_candidate) if store_candidate else 0)
 
     # Allow the user to select the barocde column
-    # barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
+    barcode_column = st.selectbox("Select the barcode column", options=df.columns.tolist(), index=df.columns.tolist().index(barcode_candidate) if barcode_candidate else 0)
 
     # Allow the user to select the sales column with a default suggestion
     sales_column = st.selectbox("Select the sales column", options=df.columns.tolist(), index=df.columns.tolist().index(sales_candidate) if sales_candidate else 0)
 
     # Display the selected columns for confirmation
     st.write(f"Selected date column: {date_column}")
-    st.write(f"Selected store column: {store_column}")
-    # st.write(f"Selected barcode column: {barcode_column}")
+    # st.write(f"Selected store column: {store_column}")
+    st.write(f"Selected barcode column: {barcode_column}")
     st.write(f"Selected sales column: {sales_column}")
 
 
@@ -142,8 +142,8 @@ if uploaded_file is not None:
             time.sleep(5)  # Wait for 5 seconds
             
         st.session_state.selected_date_column = date_column
-        st.session_state.selected_store_column = store_column
-        # st.session_state.selected_barcode_column = barcode_column
+        # st.session_state.selected_store_column = store_column
+        st.session_state.selected_barcode_column = barcode_column
         st.session_state.selected_sales_column = sales_column
 
         st.session_state.finder_texts = {'date':st.session_state.selected_date_column,
