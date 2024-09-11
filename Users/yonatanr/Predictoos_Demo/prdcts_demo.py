@@ -294,16 +294,19 @@ if uploaded_file is not None:
                 # time.sleep(2)
                 response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, timegen_api_key)
                 
-                prediction = sum(response['value'])
-                pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
-                timegen_data.append([pred_date,barcode,prediction])
-            timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
-
-
-        # Display the selected columns alongside the original
-        if 'finder_texts' in st.session_state:
-            selected_df = timegen_test_df
+                if response:
+                    prediction = sum(response['value'])
+                    pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
+                    timegen_data.append([pred_date,barcode,prediction])
             
+            if timegen_data:
+                timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
+
+
+        # Display portion of the dataframe
+        if not timegen_test_df.empty:
+            
+            selected_df = timegen_test_df
             selected_df.rename({st.session_state.selected_date_column:f'{st.session_state.selected_date_column}_Forecast',st.session_state.selected_sales_column:f'{st.session_state.selected_sales_column}_Forecast'},axis = 1, inplace = True)
             # selected_df = df.head(10)
             st.write("Here is a sample of your demand forecast:")
