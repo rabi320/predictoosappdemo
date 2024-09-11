@@ -4,6 +4,10 @@ import time
 from openai import AzureOpenAI
 import os
 from datetime import date,timedelta,datetime
+import json
+import time
+from datetime import datetime,date,timedelta
+import urllib
 
 
 # Display the logo
@@ -59,6 +63,7 @@ def df_explainer(df):
 
 
 openai_api_key = os.getenv('OPENAI_KEY')
+timegen_api_key = os.getenv('TIMEGEN_KEY')
 
 client = AzureOpenAI(  
     azure_endpoint="https://ai-usa.openai.azure.com/",  
@@ -80,6 +85,48 @@ def generate_text(prompt, sys_msg, examples=[]):
     )  
     return response.choices[0].message.content.strip()  
 
+def call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, api_key):  
+    # Construct the data dictionary  
+    data = {  
+        "freq": freq,  
+        "fh": fh,  
+        "y": y,  
+        "clean_ex_first": clean_ex_first,  
+        "finetune_steps": finetune_steps,  
+        "finetune_loss": finetune_loss  
+    }  
+      
+    # Convert the data dictionary to a JSON string and then encode it  
+    body = str.encode(json.dumps(data))  
+      
+    # Define the URL for the API endpoint  
+    url = 'https://TimeGEN-1-kghri.eastus.models.ai.azure.com/forecast'  
+      
+    # Validate the API key  
+    if not api_key:  
+        raise Exception("A key should be provided to invoke the endpoint")  
+      
+    # Set the request headers  
+    headers = {  
+        'Content-Type': 'application/json',  
+        'Authorization': 'Bearer ' + api_key  
+    }  
+      
+    # Create the request  
+    req = urllib.request.Request(url, body, headers)  
+      
+    # Try to make the request and handle the response  
+    try:  
+        response = urllib.request.urlopen(req)  
+        result = response.read()  
+        result = result.decode('utf-8')
+        result = json.loads(result)   # Print the response from the API  
+        return result  # Optionally return the result for further processing  
+    except urllib.error.HTTPError as error:  
+        print("The request failed with status code: " + str(error.code))  
+        print(error.info())  
+        print(error.read().decode("utf8", 'ignore'))  
+        return None  # Return None or handle the error as needed 
 
 # File uploader for CSV files
 # A visually attractive note using Markdown for instructions
@@ -229,10 +276,34 @@ if uploaded_file is not None:
             # add the 0's automatically
             df = dt_df.explode(st.session_state.selected_date_column).merge(df,how = 'left',on = dt_df.columns.tolist()).fillna(0)
 
+            timegen_data = []
+
+            for barcode in barcode_lst:
+                print(barcode)
+                freq = 'D'
+                fh = horizon
+                clean_ex_first = True
+                finetune_loss = 'default'
+                api_key = timegen_api_key
+                finetune_steps = 0
+                y = df[(df[st.session_state.selected_barcode_column]==barcode)].copy().dropna().reset_index(drop = True)
+
+                y[st.session_state.selected_date_column] = y[st.session_state.selected_date_column].apply(lambda x: str(x)).astype(str)
+                y = y.set_index(st.session_state.selected_date_column)
+                y = y.to_dict()[st.session_state.selected_sales_column]
+
+                # time.sleep(2)
+                response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, api_key)
+                
+                prediction = sum(response['value'])
+                pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
+                timegen_data.append([pred_date,barcode,prediction])
+            timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
+
 
         # Display the selected columns alongside the original
         if 'finder_texts' in st.session_state:
-            selected_df = df[df[st.session_state.selected_date_column]==df[st.session_state.selected_date_column].max()][list(st.session_state.finder_texts.values())]
+            selected_df = timegen_test_df
             
             selected_df.rename({st.session_state.selected_date_column:f'{st.session_state.selected_date_column}_Forecast',st.session_state.selected_sales_column:f'{st.session_state.selected_sales_column}_Forecast'},axis = 1, inplace = True)
             # selected_df = df.head(10)
