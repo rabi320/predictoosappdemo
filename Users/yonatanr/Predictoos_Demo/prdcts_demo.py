@@ -63,7 +63,7 @@ def df_explainer(df):
 
 
 openai_api_key = os.getenv('OPENAI_KEY')
-timegen_api_key = os.getenv('TIMEGEN_KEY')
+timegen_api_key = os.getenv('TIIMEGEN_KEY')
 
 client = AzureOpenAI(  
     azure_endpoint="https://ai-usa.openai.azure.com/",  
@@ -284,7 +284,6 @@ if uploaded_file is not None:
                 fh = horizon
                 clean_ex_first = True
                 finetune_loss = 'default'
-                api_key = timegen_api_key
                 finetune_steps = 0
                 y = df[(df[st.session_state.selected_barcode_column]==barcode)].copy().dropna().reset_index(drop = True)
 
@@ -293,7 +292,7 @@ if uploaded_file is not None:
                 y = y.to_dict()[st.session_state.selected_sales_column]
 
                 # time.sleep(2)
-                response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, api_key)
+                response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, timegen_api_key)
                 
                 prediction = sum(response['value'])
                 pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
