@@ -222,7 +222,7 @@ if uploaded_file is not None:
 
 
         
-
+        st.session_state.timegen_test_df = pd.DataFrame()
         # Save the confirmed selections
         if st.button("Confirm selections"):
             # Add a loading spinner with a delay
@@ -241,8 +241,8 @@ if uploaded_file is not None:
                                             'barcode':st.session_state.selected_barcode_column, 
                                             'sales quantity':st.session_state.selected_sales_column}
 
-            if 'timegen_test_df' not in st.session_state:
-                st.session_state.timegen_test_df = pd.DataFrame()
+            
+            
 
 
             st.success("Selections saved!")
