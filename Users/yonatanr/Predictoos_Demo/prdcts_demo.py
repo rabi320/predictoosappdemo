@@ -241,6 +241,10 @@ if uploaded_file is not None:
                                             'barcode':st.session_state.selected_barcode_column, 
                                             'sales quantity':st.session_state.selected_sales_column}
 
+            if 'timegen_test_df' not in st.session_state:
+                st.session_state.timegen_test_df = pd.DataFrame()
+
+
             st.success("Selections saved!")
 
             df = df[list(st.session_state.finder_texts.values())]
@@ -301,12 +305,12 @@ if uploaded_file is not None:
             
             if timegen_data:
                 timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
-
+                st.session_state.timegen_test_df = timegen_test_df
 
         # Display portion of the dataframe
-        if not timegen_test_df.empty:
+        if not st.session_state.timegen_test_df.empty:
             
-            selected_df = timegen_test_df
+            selected_df = st.session_state.timegen_test_df
             selected_df.rename({st.session_state.selected_date_column:f'{st.session_state.selected_date_column}_Forecast',st.session_state.selected_sales_column:f'{st.session_state.selected_sales_column}_Forecast'},axis = 1, inplace = True)
             # selected_df = df.head(10)
             st.write("Here is a sample of your demand forecast:")
