@@ -281,32 +281,36 @@ if uploaded_file is not None:
             df = dt_df.explode(st.session_state.selected_date_column).merge(df,how = 'left',on = dt_df.columns.tolist()).fillna(0)
 
             timegen_data = []
+            num_barcodes = len(barcode_lst)
+            with st.spinner("Loading barcodes... Please wait."):
+                for index,barcode in enumerate(barcode_lst):
+                    freq = 'D'
+                    fh = horizon
+                    clean_ex_first = True
+                    finetune_loss = 'default'
+                    finetune_steps = 0
+                    y = df[(df[st.session_state.selected_barcode_column]==barcode)].copy().dropna().reset_index(drop = True)
 
-            for barcode in barcode_lst:
-                print(barcode)
-                freq = 'D'
-                fh = horizon
-                clean_ex_first = True
-                finetune_loss = 'default'
-                finetune_steps = 0
-                y = df[(df[st.session_state.selected_barcode_column]==barcode)].copy().dropna().reset_index(drop = True)
+                    y[st.session_state.selected_date_column] = y[st.session_state.selected_date_column].apply(lambda x: str(x)).astype(str)
+                    y = y.set_index(st.session_state.selected_date_column)
+                    y = y.to_dict()[st.session_state.selected_sales_column]
 
-                y[st.session_state.selected_date_column] = y[st.session_state.selected_date_column].apply(lambda x: str(x)).astype(str)
-                y = y.set_index(st.session_state.selected_date_column)
-                y = y.to_dict()[st.session_state.selected_sales_column]
-
-                # time.sleep(2)
-                response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, timegen_api_key)
+                    # time.sleep(2)
+                    response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, timegen_api_key)
+                    
+                    if response:
+                        prediction = sum(response['value'])
+                        pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
+                        timegen_data.append([pred_date,barcode,prediction])
+                    st.progress((index+1)/num_barcodes)
                 
-                if response:
-                    prediction = sum(response['value'])
-                    pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
-                    timegen_data.append([pred_date,barcode,prediction])
-            
             if timegen_data:
                 timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
                 st.session_state.timegen_test_df = timegen_test_df
-
+                # Notify the user and trigger the balloons
+                st.success("All barcodes have been loaded successfully!")
+                st.balloons()  # This will trigger the balloon animation
+                
         # Display portion of the dataframe
         if not st.session_state.timegen_test_df.empty:
             
