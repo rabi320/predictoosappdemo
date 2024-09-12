@@ -284,7 +284,7 @@ if uploaded_file is not None:
             num_barcodes = len(barcode_lst)
             
             with st.spinner("Loading barcodes... Please wait."):
-                my_bar = st.progress(0, text='Loading')
+                my_bar = st.progress(0, text=f'{num_barcodes} items left')
                 for index,barcode in enumerate(barcode_lst):
                     freq = 'D'
                     fh = horizon
@@ -305,7 +305,7 @@ if uploaded_file is not None:
                         pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
                         timegen_data.append([pred_date,barcode,prediction])
                     
-                    my_bar.progress((index+1)/num_barcodes, text='Loading')
+                    my_bar.progress((index+1)/num_barcodes, text=f'{num_barcodes - (index+1)} items left')
                 
             if timegen_data:
                 timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
