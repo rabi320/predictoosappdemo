@@ -282,7 +282,9 @@ if uploaded_file is not None:
 
             timegen_data = []
             num_barcodes = len(barcode_lst)
+            
             with st.spinner("Loading barcodes... Please wait."):
+                my_bar = st.progress(0, text='Loading')
                 for index,barcode in enumerate(barcode_lst):
                     freq = 'D'
                     fh = horizon
@@ -302,7 +304,8 @@ if uploaded_file is not None:
                         prediction = sum(response['value'])
                         pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
                         timegen_data.append([pred_date,barcode,prediction])
-                    st.progress((index+1)/num_barcodes)
+                    
+                    my_bar.progress((index+1)/num_barcodes, text='Loading')
                 
             if timegen_data:
                 timegen_test_df = pd.DataFrame(timegen_data, columns = [st.session_state.selected_date_column,st.session_state.selected_barcode_column,st.session_state.selected_sales_column])
@@ -310,7 +313,7 @@ if uploaded_file is not None:
                 # Notify the user and trigger the balloons
                 st.success("All barcodes have been loaded successfully!")
                 st.balloons()  # This will trigger the balloon animation
-                
+
         # Display portion of the dataframe
         if not st.session_state.timegen_test_df.empty:
             
