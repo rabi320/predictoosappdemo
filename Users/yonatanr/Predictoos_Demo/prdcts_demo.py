@@ -226,8 +226,6 @@ if uploaded_file is not None:
         # Save the confirmed selections
         if st.button("Confirm selections"):
             # Add a loading spinner with a delay
-            with st.spinner('Calculating predictions...'):
-                time.sleep(5)  # Wait for 5 seconds
                 
             st.session_state.selected_date_column = date_column
             # st.session_state.selected_store_column = store_column
