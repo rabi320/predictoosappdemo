@@ -332,7 +332,8 @@ if uploaded_file is not None:
                         else:
                             raise ValueError
                     except ValueError:
-                        st.error('Model could not load your data, varify your data and column choices')
+                        st.error('Model could not load your data, varify your data and column choices') 
+                        break
                     my_bar.progress((index+1)/num_barcodes, text=f'{num_barcodes - (index+1)} items left')
                 
             if timegen_data:
