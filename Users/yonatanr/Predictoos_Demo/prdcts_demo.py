@@ -261,7 +261,7 @@ if uploaded_file is not None:
             history = 180 if st.session_state.forecast_type=='Weekly' else 360
             
             # taking leading barcodes
-            grp_df = df.groupby(st.session_state.selected_barcode_column).agg({st.session_state.selected_sales_column:'sum',st.session_state.selected_date_column:lambda x: (max_dt - max(x)).days}).sort_values('Sales_Qty',ascending = False)
+            grp_df = df.groupby(st.session_state.selected_barcode_column).agg({st.session_state.selected_sales_column:'sum',st.session_state.selected_date_column:lambda x: (max_dt - max(x)).days}).sort_values(st.session_state.selected_sales_column,ascending = False)
 
             # only sold in the period of the horizon
             barcode_lst = grp_df[grp_df[st.session_state.selected_date_column]<horizon].head(50).index.tolist()
