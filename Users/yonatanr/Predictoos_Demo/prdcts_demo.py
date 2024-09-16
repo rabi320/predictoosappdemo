@@ -324,11 +324,15 @@ if uploaded_file is not None:
                     # time.sleep(2)
                     response = call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss, timegen_api_key)
                     
-                    if response:
-                        prediction = sum(response['value'])
-                        pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
-                        timegen_data.append([pred_date,barcode,prediction])
-                    
+                    try:
+                        if response:
+                            prediction = sum(response['value'])
+                            pred_date = f"{response['timestamp'][0].replace(' 00:00:00','')} - {response['timestamp'][-1].replace(' 00:00:00','')}"
+                            timegen_data.append([pred_date,barcode,prediction])
+                        else:
+                            raise ValueError
+                    except ValueError:
+                        st.error('Model could not load your data, varify your data and column choices')
                     my_bar.progress((index+1)/num_barcodes, text=f'{num_barcodes - (index+1)} items left')
                 
             if timegen_data:
