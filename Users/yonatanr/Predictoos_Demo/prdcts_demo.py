@@ -128,6 +128,29 @@ def call_forecast_api(freq, fh, y, clean_ex_first, finetune_steps, finetune_loss
         print(error.read().decode("utf8", 'ignore'))  
         return None  # Return None or handle the error as needed 
 
+
+
+def convert_and_validate_dates(df, date_column):
+    """
+    Convert the specified date column in the DataFrame to datetime format,
+    ensuring all dates are valid and correctly formatted.
+
+    Parameters:
+    - df: DataFrame containing the date column
+    - date_column: name of the date column to convert
+
+    Returns:
+    - DataFrame with the date column converted to datetime
+    """
+    # Try converting the date column to datetime
+    try:
+        df[date_column] = pd.to_datetime(df[date_column], errors='raise')  # Raise error on invalid parsing
+    except Exception as e:
+        st.error(f"Error converting dates in column '{date_column}': {e}")
+        # Optionally return the original DataFrame, or a cleaned version
+
+    return df
+
 # File uploader for CSV files
 # A visually attractive note using Markdown for instructions
 st.markdown(
@@ -251,7 +274,8 @@ if uploaded_file is not None:
             # begin converting the data to fit the model
             
             # date conversion
-            df[st.session_state.selected_date_column] = pd.to_datetime(df[st.session_state.selected_date_column])
+            # df[st.session_state.selected_date_column] = pd.to_datetime(df[st.session_state.selected_date_column])
+            df = convert_and_validate_dates(df, st.session_state.selected_date_column)
             
             #max date of the data
             max_dt = df[st.session_state.selected_date_column].max()
