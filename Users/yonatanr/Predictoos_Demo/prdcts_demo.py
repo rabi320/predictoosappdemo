@@ -11,8 +11,7 @@ import urllib
 
 
 # Display the image from the URL
-image_url = "predictoos_logo.png"
-st.image(image_url, use_column_width=True)
+st.markdown("![](predictoos_logo.png)")
 
 # Set the title of the app
 st.title("AI Inventory Strategy")
