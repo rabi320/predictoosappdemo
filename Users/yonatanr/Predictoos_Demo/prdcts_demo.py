@@ -16,6 +16,8 @@ st.markdown("![](https://i0.wp.com/predictoos.com/wp-content/uploads/2024/07/LOG
 # Set the title of the app
 st.title("AI Inventory Strategy")
 
+st.title(f"{os.listdir()}")
+
 openai_api_key = os.getenv('OPENAI_KEY')
 
 client = AzureOpenAI(  
