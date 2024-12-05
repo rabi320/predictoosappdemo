@@ -11,7 +11,7 @@ import urllib
 
 
 # Display the image from the URL
-image_url = "https://i0.wp.com/predictoos.com/wp-content/uploads/2024/07/logo-2-min.png?fit=159%2c33&ssl=1"
+image_url = "https://i0.wp.com/predictoos.com/wp-content/uploads/2024/07/logo-2-min.png"
 st.image(image_url, caption="Predictoos Logo", use_column_width=True)
 
 # Set the title of the app
