@@ -24,6 +24,7 @@ client = AzureOpenAI(
     api_version="2024-02-15-preview"  
 )  
 MODEL = "Diplochat"  
+
   
 def generate_text(prompt, sys_msg, examples=[]):  
     response = client.chat.completions.create(  
@@ -37,3 +38,10 @@ def generate_text(prompt, sys_msg, examples=[]):
         stop=None  
     )  
     return response.choices[0].message.content.strip()  
+
+
+
+inv_st_df = pd.read_csv('Inventory_strategy_table.csv',index = False)
+
+# Display the DataFrame with text wrapping
+st.dataframe(inv_st_df, use_container_width=True)
