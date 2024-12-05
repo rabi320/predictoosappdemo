@@ -43,7 +43,7 @@ def generate_text(prompt, sys_msg, examples=[]):
 
 
 
-# inv_st_df = pd.read_csv('Inventory_strategy_table.csv')
+inv_st_df = pd.read_csv('Users/yonatanr/Predictoos_Demo/Inventory_strategy_table.csv')
 
 # Display the DataFrame with text wrapping
-# st.dataframe(inv_st_df, use_container_width=True)
+st.dataframe(inv_st_df, use_container_width=True)
