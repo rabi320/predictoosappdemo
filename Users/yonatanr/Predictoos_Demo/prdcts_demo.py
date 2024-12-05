@@ -11,11 +11,11 @@ import urllib
 
 
 # Display the image from the URL
-image_url = "https://i0.wp.com/predictoos.com/wp-content/uploads/2024/07/logo-2-min.png"
-st.image(image_url, caption="Predictoos Logo", use_column_width=True)
+image_url = "predictoos_logo.png"
+st.image(image_url, use_column_width=True)
 
 # Set the title of the app
-st.title("Predictoos AI Inventory Strategy")
+st.title("AI Inventory Strategy")
 
 openai_api_key = os.getenv('OPENAI_KEY')
 
