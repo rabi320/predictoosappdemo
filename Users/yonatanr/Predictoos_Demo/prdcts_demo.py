@@ -11,7 +11,7 @@ import urllib
 
 
 # Display the image from the URL
-st.markdown("![](predictoos_logo.png)")
+st.markdown("![](https://i0.wp.com/predictoos.com/wp-content/uploads/2024/07/LOGO-2-min.png?fit=159%2C33&ssl=1)")
 
 # Set the title of the app
 st.title("AI Inventory Strategy")
