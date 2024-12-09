@@ -125,7 +125,7 @@ for index, row in df.iterrows():
 st.title("Filter DataFrame by Unique Combinations of Material and Customer")
 
 # Create a list of unique combinations
-unique_combinations = inv_st_df[['material_name', 'customer_code']].drop_duplicates()
+unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
 
 # Create checkboxes for each unique combination
 selected_combinations = []
@@ -133,13 +133,13 @@ selected_combinations = []
 st.subheader("Select Unique Combinations (Material Name, Customer Code)")
 
 for index, row in unique_combinations.iterrows():
-    combination = f"{row['material_name']} ({row['customer_code']})"
+    combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
     if st.checkbox(combination):
-        selected_combinations.append((row['material_name'], row['customer_code']))
+        selected_combinations.append((row['MATERIAL_NAME'], row['CUSTOMER_CODE']))
 
 # Filter DataFrame based on selected combinations
 if selected_combinations:
-    filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['material_name'], x['customer_code']) in selected_combinations, axis=1)]
+    filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['MATERIAL_NAME'], x['CUSTOMER_CODE']) in selected_combinations, axis=1)]
 
     # Create a placeholder for the DataFrame with a tooltip for a specific column
     st.subheader("Filtered DataFrame:")
