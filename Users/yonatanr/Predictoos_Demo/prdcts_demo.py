@@ -76,48 +76,48 @@ inv_st_df = pd.read_csv('Users/yonatanr/Predictoos_Demo/Inventory_strategy_table
 
 
 # Sample DataFrame
-data = {
-    'Material Name': ['Material A', 'Material B', 'Material C'],
-    'Customer Code': ['C001', 'C002', 'C003']
-}
+# data = {
+#     'Material Name': ['Material A', 'Material B', 'Material C'],
+#     'Customer Code': ['C001', 'C002', 'C003']
+# }
 
-df = pd.DataFrame(data)
+# df = pd.DataFrame(data)
 
-# Title of the app
-st.title("DataFrame with Tooltips")
+# # Title of the app
+# st.title("DataFrame with Tooltips")
 
-# Display the DataFrame with tooltips
-st.markdown("""
-<style>
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
+# # Display the DataFrame with tooltips
+# st.markdown("""
+# <style>
+# .tooltip {
+#     position: relative;
+#     display: inline-block;
+#     cursor: pointer;
+# }
 
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-}
+# .tooltip .tooltiptext {
+#     visibility: hidden;
+#     width: 120px;
+#     background-color: black;
+#     color: #fff;
+#     text-align: center;
+#     border-radius: 5px;
+#     padding: 5px;
+#     position: absolute;
+#     z-index: 1;
+# }
 
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-</style>
-""", unsafe_allow_html=True)
+# .tooltip:hover .tooltiptext {
+#     visibility: visible;
+# }
+# </style>
+# """, unsafe_allow_html=True)
 
-# Display DataFrame with tooltips
-for index, row in df.iterrows():
-    tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
-    st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
-             unsafe_allow_html=True)
+# # Display DataFrame with tooltips
+# for index, row in df.iterrows():
+#     tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
+#     st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+#              unsafe_allow_html=True)
     
 
 
@@ -174,11 +174,11 @@ if selected_combinations:
         return html
 
     # Display the DataFrame
-    st.markdown(get_html_with_tooltips(filtered_df.drop('IS',axis=1)), unsafe_allow_html=True)
+    st.markdown(get_html_with_tooltips(filtered_df.drop(['IS','Unnamed: 0'],axis=1)), unsafe_allow_html=True)
         # Display DataFrame with tooltips
     
     
-    st.write('AI Inventory Strategy')
+    st.subheader('AI Inventory Strategy')
 
 
     # Display the DataFrame with tooltips
