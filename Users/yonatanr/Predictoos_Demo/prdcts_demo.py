@@ -115,7 +115,7 @@ st.markdown("""
 
 # Display DataFrame with tooltips
 for index, row in df.iterrows():
-    tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
+    tooltip_text = f"This is {row['MATERIAL_NAME']}, identified by code {row['MATERIAL_NAME']}"
     st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
              unsafe_allow_html=True)
     
@@ -125,7 +125,7 @@ for index, row in df.iterrows():
 st.title("Filter DataFrame by Unique Combinations of Material and Customer")
 
 # Create a list of unique combinations
-unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
+unique_combinations = inv_st_df[['MATERIAL_NAME', 'MATERIAL_NAME']].drop_duplicates()
 
 # Create checkboxes for each unique combination
 selected_combinations = []
