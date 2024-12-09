@@ -121,16 +121,13 @@ inv_st_df = pd.read_csv('Users/yonatanr/Predictoos_Demo/Inventory_strategy_table
     
 
 
-# Title of the app
-st.title("Filter DataFrame by Unique Combinations of Material and Customer")
-
 # Create a list of unique combinations
 unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
 
 # Create checkboxes for each unique combination
 selected_combinations = []
 
-st.subheader("Select Unique Combinations (Material Name, Customer Code)")
+st.subheader("Select Customer and Item")
 
 for index, row in unique_combinations.iterrows():
     combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
