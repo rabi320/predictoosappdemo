@@ -181,7 +181,7 @@ if selected_combinations:
     st.write('AI Inventory Strategy')
     for index, row in filtered_df.iterrows():
         tooltip_text = f"{row['IS']}"
-        st.write(f"<div class='tooltip'>{row['CUSTOMER_CODE']+' '+row['MATERIAL_NAME']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+        st.write(f"<div class='tooltip'>{str(row['CUSTOMER_CODE'])+' '+row['MATERIAL_NAME']}<span class='tooltiptext'>{tooltip_text}</span></div>",
                 unsafe_allow_html=True)
         
 else:
