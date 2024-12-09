@@ -120,8 +120,6 @@ for index, row in df.iterrows():
              unsafe_allow_html=True)
     
 
-# Load the DataFrame
-inv_st_df = pd.read_csv('users/yonatanr/predictoos_demo/inventory_strategy_table.csv')
 
 # Title of the app
 st.title("Filter DataFrame by Unique Combinations of Material and Customer")
