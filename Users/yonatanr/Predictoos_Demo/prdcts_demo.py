@@ -115,8 +115,8 @@ st.markdown("""
 
 # Display DataFrame with tooltips
 for index, row in df.iterrows():
-    tooltip_text = f"This is {row['MATERIAL_NAME']}, identified by code {row['CUSTOMER_CODE']}"
-    st.write(f"<div class='tooltip'>{row['MATERIAL_NAME']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+    tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
+    st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
              unsafe_allow_html=True)
     
 
