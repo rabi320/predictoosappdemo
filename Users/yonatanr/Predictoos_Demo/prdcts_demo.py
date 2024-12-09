@@ -118,3 +118,65 @@ for index, row in df.iterrows():
     tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
     st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
              unsafe_allow_html=True)
+    
+
+# Load the DataFrame
+inv_st_df = pd.read_csv('users/yonatanr/predictoos_demo/inventory_strategy_table.csv')
+
+# Title of the app
+st.title("Filter DataFrame by Unique Combinations of Material and Customer")
+
+# Create a list of unique combinations
+unique_combinations = inv_st_df[['material_name', 'customer_code']].drop_duplicates()
+
+# Create checkboxes for each unique combination
+selected_combinations = []
+
+st.subheader("Select Unique Combinations (Material Name, Customer Code)")
+
+for index, row in unique_combinations.iterrows():
+    combination = f"{row['material_name']} ({row['customer_code']})"
+    if st.checkbox(combination):
+        selected_combinations.append((row['material_name'], row['customer_code']))
+
+# Filter DataFrame based on selected combinations
+if selected_combinations:
+    filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['material_name'], x['customer_code']) in selected_combinations, axis=1)]
+
+    # Create a placeholder for the DataFrame with a tooltip for a specific column
+    st.subheader("Filtered DataFrame:")
+
+    # Function to create HTML for DataFrame with tooltip
+    def get_html_with_tooltips(df):
+        html = '<table style="width:100%; border-collapse:collapse;">'
+        # Adding the header
+        html += '<tr style="background-color:#f1f1f1;">'
+        for col in df.columns:
+            html += f'<th style="text-align:left; padding:8px;">{col}</th>'
+        html += '</tr>'
+
+        # Adding rows
+        for index, row in df.iterrows():
+            html += '<tr>'
+            for col in df.columns:
+                # Checking if the column needs a tooltip; replace 'your_tooltip_text' with actual tooltip
+                if col == 'is':  # Replace 'is' with the actual column name for tooltip
+                    tooltip_text = "Description or tooltip text for this cell."  # Define your tooltip text
+                    html += f"""<td style="padding:8px; position:relative;">
+                                    {row[col]} 
+                                    <span class="tooltip" style="position:absolute; visibility:hidden; background-color:#555; color:white; text-align:center; border-radius:6px; padding:5px; z-index:1;">
+                                        {tooltip_text}
+                                    </span>
+                                </td>"""
+                else:
+                    html += f'<td style="padding:8px;">{row[col]}</td>'
+            html += '</tr>'
+
+        html += '</table>'
+        return html
+
+    # Display the DataFrame
+    st.markdown(get_html_with_tooltips(filtered_df), unsafe_allow_html=True)
+
+else:
+    st.write("Please select at least one combination to display the data.")
