@@ -148,7 +148,7 @@ if selected_combinations:
     def get_html_with_tooltips(df):
         html = '<table style="width:100%; border-collapse:collapse;">'
         # Adding the header
-        html += '<tr style="background-color:#f1f1f1;">'
+        html += '<tr style="background-color:#595759;">'
         for col in df.columns:
             html += f'<th style="text-align:left; padding:8px;">{col}</th>'
         html += '</tr>'
