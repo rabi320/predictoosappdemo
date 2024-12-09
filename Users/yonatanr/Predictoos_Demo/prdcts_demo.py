@@ -73,4 +73,48 @@ if selected_combinations:
     st.write(filtered_df)
 else:
     st.write("Please select at least one combination to display the data.")
-    
+
+
+# Sample DataFrame
+data = {
+    'Material Name': ['Material A', 'Material B', 'Material C'],
+    'Customer Code': ['C001', 'C002', 'C003']
+}
+
+df = pd.DataFrame(data)
+
+# Title of the app
+st.title("DataFrame with Tooltips")
+
+# Display the DataFrame with tooltips
+st.markdown("""
+<style>
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Display DataFrame with tooltips
+for index, row in df.iterrows():
+    tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
+    st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+             unsafe_allow_html=True)
