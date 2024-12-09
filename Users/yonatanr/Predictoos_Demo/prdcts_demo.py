@@ -175,6 +175,14 @@ if selected_combinations:
 
     # Display the DataFrame
     st.markdown(get_html_with_tooltips(filtered_df), unsafe_allow_html=True)
-
+        # Display DataFrame with tooltips
+    
+    
+    st.write('AI Inventory Strategy')
+    for index, row in filtered_df.iterrows():
+        tooltip_text = f"{row['IS']}"
+        st.write(f"<div class='tooltip'>{row['CUSTOMER_CODE']+' '+row['MATERIAL_NAME']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+                unsafe_allow_html=True)
+        
 else:
     st.write("Please select at least one combination to display the data.")
