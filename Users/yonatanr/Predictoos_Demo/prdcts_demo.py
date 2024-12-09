@@ -174,7 +174,7 @@ if selected_combinations:
         return html
 
     # Display the DataFrame
-    st.markdown(get_html_with_tooltips(filtered_df), unsafe_allow_html=True)
+    st.markdown(get_html_with_tooltips(filtered_df.drop('IS',axis=1)), unsafe_allow_html=True)
         # Display DataFrame with tooltips
     
     
@@ -192,7 +192,7 @@ if selected_combinations:
 
     .tooltip .tooltiptext {
         visibility: hidden;
-        width: 250px;
+        width: 500px;
         background-color: black;
         color: #fff;
         text-align: center;
@@ -209,7 +209,7 @@ if selected_combinations:
     """, unsafe_allow_html=True)
     for index, row in filtered_df.iterrows():
         tooltip_text = f"{row['IS']}"
-        st.write(f"<div class='tooltip'>{str(row['CUSTOMER_CODE'])+' '+row['MATERIAL_NAME']}<span class='tooltiptext'>{tooltip_text}</span></div>",
+        st.write(f"<div class='tooltip'>{str(row['CUSTOMER_CODE'])+' '+row['MATERIAL_NAME']+' 🤖'}<span class='tooltiptext'>{tooltip_text}</span></div>",
                 unsafe_allow_html=True)
         
 else:
