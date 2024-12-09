@@ -51,28 +51,28 @@ inv_st_df = pd.read_csv('Users/yonatanr/Predictoos_Demo/Inventory_strategy_table
 # st.dataframe(inv_st_df, use_container_width=True)
 
 # Title of the app
-st.title("Filter DataFrame by Unique Combinations of Material and Customer")
+# st.title("Filter DataFrame by Unique Combinations of Material and Customer")
 
-# Create a list of unique combinations
-unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
+# # Create a list of unique combinations
+# unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
 
-# Create checkboxes for each unique combination
-selected_combinations = []
+# # Create checkboxes for each unique combination
+# selected_combinations = []
 
-st.subheader("Select Unique Combinations (material_name, customer_code)")
+# st.subheader("Select Unique Combinations (material_name, customer_code)")
 
-for index, row in unique_combinations.iterrows():
-    combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
-    if st.checkbox(combination):
-        selected_combinations.append((row['MATERIAL_NAME'], row['CUSTOMER_CODE']))
+# for index, row in unique_combinations.iterrows():
+#     combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
+#     if st.checkbox(combination):
+#         selected_combinations.append((row['MATERIAL_NAME'], row['CUSTOMER_CODE']))
 
-# Filter DataFrame based on selected combinations
-if selected_combinations:
-    filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['MATERIAL_NAME'], x['CUSTOMER_CODE']) in selected_combinations, axis=1)]
-    st.write("Filtered DataFrame:")
-    st.write(filtered_df)
-else:
-    st.write("Please select at least one combination to display the data.")
+# # Filter DataFrame based on selected combinations
+# if selected_combinations:
+#     filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['MATERIAL_NAME'], x['CUSTOMER_CODE']) in selected_combinations, axis=1)]
+#     st.write("Filtered DataFrame:")
+#     st.write(filtered_df)
+# else:
+#     st.write("Please select at least one combination to display the data.")
 
 
 # Sample DataFrame
