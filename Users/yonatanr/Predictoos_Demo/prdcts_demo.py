@@ -44,82 +44,6 @@ def generate_text(prompt, sys_msg, examples=[]):
 
 inv_st_df = pd.read_csv('Users/yonatanr/Predictoos_Demo/Inventory_strategy_table.csv')
 
-# unique_skus = ','.join(inv_st_df.MATERIAL_NUMBER.unique().tolist())
-# st.text(unique_skus)
-
-# Display the DataFrame with text wrapping
-# st.dataframe(inv_st_df, use_container_width=True)
-
-# Title of the app
-# st.title("Filter DataFrame by Unique Combinations of Material and Customer")
-
-# # Create a list of unique combinations
-# unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
-
-# # Create checkboxes for each unique combination
-# selected_combinations = []
-
-# st.subheader("Select Unique Combinations (material_name, customer_code)")
-
-# for index, row in unique_combinations.iterrows():
-#     combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
-#     if st.checkbox(combination):
-#         selected_combinations.append((row['MATERIAL_NAME'], row['CUSTOMER_CODE']))
-
-# # Filter DataFrame based on selected combinations
-# if selected_combinations:
-#     filtered_df = inv_st_df[inv_st_df.apply(lambda x: (x['MATERIAL_NAME'], x['CUSTOMER_CODE']) in selected_combinations, axis=1)]
-#     st.write("Filtered DataFrame:")
-#     st.write(filtered_df)
-# else:
-#     st.write("Please select at least one combination to display the data.")
-
-
-# Sample DataFrame
-# data = {
-#     'Material Name': ['Material A', 'Material B', 'Material C'],
-#     'Customer Code': ['C001', 'C002', 'C003']
-# }
-
-# df = pd.DataFrame(data)
-
-# # Title of the app
-# st.title("DataFrame with Tooltips")
-
-# # Display the DataFrame with tooltips
-# st.markdown("""
-# <style>
-# .tooltip {
-#     position: relative;
-#     display: inline-block;
-#     cursor: pointer;
-# }
-
-# .tooltip .tooltiptext {
-#     visibility: hidden;
-#     width: 120px;
-#     background-color: black;
-#     color: #fff;
-#     text-align: center;
-#     border-radius: 5px;
-#     padding: 5px;
-#     position: absolute;
-#     z-index: 1;
-# }
-
-# .tooltip:hover .tooltiptext {
-#     visibility: visible;
-# }
-# </style>
-# """, unsafe_allow_html=True)
-
-# # Display DataFrame with tooltips
-# for index, row in df.iterrows():
-#     tooltip_text = f"This is {row['Material Name']}, identified by code {row['Customer Code']}"
-#     st.write(f"<div class='tooltip'>{row['Material Name']}<span class='tooltiptext'>{tooltip_text}</span></div>",
-#              unsafe_allow_html=True)
-    
-
 
 # Create a list of unique combinations
 unique_combinations = inv_st_df[['MATERIAL_NAME', 'CUSTOMER_CODE']].drop_duplicates()
@@ -131,7 +55,7 @@ st.subheader("Select Customer and Item")
 
 for index, row in unique_combinations.iterrows():
     combination = f"{row['MATERIAL_NAME']} ({row['CUSTOMER_CODE']})"
-    if st.checkbox(combination):
+    if st.sidebar.checkbox(combination):
         selected_combinations.append((row['MATERIAL_NAME'], row['CUSTOMER_CODE']))
 
 # Filter DataFrame based on selected combinations
